@@ -5,6 +5,7 @@ import com.example.data.repository.PrizeRepositoryImpl
 import com.example.data.repository.task5.PrizeDbRepository
 import com.example.plugins.*
 import com.example.routing.authRoutes
+import com.example.routing.docsRoutes
 import com.example.routing.task5.task5Routes
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -41,5 +42,6 @@ fun Application.module() {
     routing {
         authRoutes(repo)
         task5Routes(repo)
+        docsRoutes()
     }
 }
