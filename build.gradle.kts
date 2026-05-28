@@ -38,6 +38,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.4")
     // HikariCP connection pool
     implementation("com.zaxxer:HikariCP:6.0.0")
+    implementation("org.mindrot:jbcrypt:0.4")
     // Logging
     implementation("ch.qos.logback:logback-classic:1.5.6")
     // Testing

@@ -39,7 +39,7 @@ fun Application.module() {
     }
 
     routing {
-        authRoutes()
+        authRoutes(repo)
         task5Routes(repo)
     }
 }

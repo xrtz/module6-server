@@ -7,6 +7,7 @@ import com.example.domain.model.task5.PrizeDb
 import com.example.domain.model.task5.UserProfile
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.mindrot.jbcrypt.BCrypt
 import java.time.LocalDateTime
 
 class PrizeDbRepository {
@@ -145,14 +146,21 @@ class PrizeDbRepository {
         true
     }
 
-    suspend fun ensureUser(username: String, passwordHash: String) = newSuspendedTransaction {
+    suspend fun ensureUser(username: String, password: String) = newSuspendedTransaction {
         val exists = UserTable.selectAll().where { UserTable.username eq username }.count() > 0
         if (!exists) {
             UserTable.insert {
                 it[UserTable.username] = username
-                it[UserTable.passwordHash] = passwordHash
+                it[UserTable.passwordHash] = BCrypt.hashpw(password, BCrypt.gensalt())
                 it[role] = "user"
             }
         }
+    }
+
+    suspend fun verifyPassword(username: String, password: String): Boolean = newSuspendedTransaction {
+        val row = UserTable.selectAll().where { UserTable.username eq username }.singleOrNull()
+            ?: return@newSuspendedTransaction false
+        val hash = row[UserTable.passwordHash]
+        BCrypt.checkpw(password, hash)
     }
 }

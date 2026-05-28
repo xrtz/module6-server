@@ -2,23 +2,17 @@ package com.example.routing
 
 import com.example.data.dto.LoginRequest
 import com.example.data.dto.LoginResponse
+import com.example.data.repository.task5.PrizeDbRepository
 import com.example.security.JwtConfig
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-private val users = mapOf(
-    "admin" to "admin123",
-    "user" to "user123",
-    "emilys" to "emilyspass"
-)
-
-fun Route.authRoutes() {
+fun Route.authRoutes(repo: PrizeDbRepository) {
     post("/auth/login") {
         val request = call.receive<LoginRequest>()
-        val expectedPassword = users[request.username]
-        if (expectedPassword != null && expectedPassword == request.password) {
+        if (repo.verifyPassword(request.username, request.password)) {
             val token = JwtConfig.generateToken(request.username)
             call.respond(LoginResponse(token = token, username = request.username))
         } else {
